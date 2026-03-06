@@ -98,7 +98,10 @@ export default function RaisedRequests() {
               background: "#ffffff",
               padding: "24px",
               borderRadius: "16px",
-              boxShadow: "0 4px 10px rgba(0,0,0,0.06)",
+
+              /* SHADOW ONLY FOR FULL COMPONENT */
+              boxShadow: "0 12px 30px rgba(0,0,0,0.12)",
+
               marginBottom: "16px",
             }}
           >

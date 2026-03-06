@@ -42,27 +42,38 @@ export default function UserDashboard() {
   };
 
   const totalRaised = services.length;
+
   const inProgress = services.filter(
     (s) => s.status === "ASSIGNED" || s.status === "IN_PROGRESS"
   ).length;
+
   const completed = services.filter(
     (s) => s.status === "COMPLETED"
   ).length;
 
   return (
-    <div style={{ display: "flex" }}>
+    <div style={{ display: "flex", fontFamily: "Inter, sans-serif" }}>
+
       <Sidebar role="USER" />
 
       <div
         style={{
-          marginLeft: "220px",
-          width: "100%",
-          background: "#e6f0ff",
+          marginLeft: "280px",
+          width: "calc(100% - 280px)",
+          background: "linear-gradient(135deg,#eef2ff,#f8fafc)",
           minHeight: "100vh",
           padding: "40px 60px",
+          boxSizing: "border-box"
         }}
       >
-        <h1 style={{ marginBottom: "30px" }}>
+        <h1
+          style={{
+            marginBottom: "35px",
+            fontSize: "34px",
+            fontWeight: "700",
+            color: "#1e293b",
+          }}
+        >
           Welcome, {user?.name}
         </h1>
 
@@ -76,9 +87,7 @@ export default function UserDashboard() {
               marginBottom: "40px",
             }}
           >
-            <h3 style={{ marginBottom: "20px" }}>
-              Complete Your Profile
-            </h3>
+            <h3 style={{ marginBottom: "20px" }}>Complete Your Profile</h3>
 
             <select
               required
@@ -135,43 +144,59 @@ export default function UserDashboard() {
         ) : (
           <div
             style={{
-              background: "#ffffff",
+              background: "white",
               padding: "40px",
-              borderRadius: "18px",
+              borderRadius: "20px",
               marginBottom: "40px",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-between",
+              boxShadow: "0 8px 30px rgba(0,0,0,0.08)",
+              border: "1px solid #e2e8f0",
             }}
           >
-            {/* LEFT DETAILS */}
-            <div>
-              <h3>Profile Details</h3>
-              <p><strong>Type:</strong> {user.userType}</p>
-              <p><strong>Department:</strong> {user.department}</p>
+
+            <div style={{ flex: 1 }}>
+              <h3
+                style={{
+                  marginBottom: "28px",
+                  fontSize: "30px",
+                  fontWeight: "700",
+                  color: "#1e293b",
+                }}
+              >
+                Profile Details
+              </h3>
+
+              <ProfileRow label="Type" value={user.userType} />
+              <ProfileRow label="Department" value={user.department} />
+
               {user.userType === "HOSTELLER" && (
-                <p><strong>Room:</strong> {user.roomNumber}</p>
+                <ProfileRow label="Room" value={user.roomNumber} />
               )}
             </div>
 
-            {/* PROFILE IMAGE */}
             <div
               style={{
                 width: "180px",
                 height: "180px",
                 overflow: "hidden",
                 borderRadius: "50%",
-                boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
+                boxShadow: "0 15px 35px rgba(0,0,0,0.15)",
+                border: "6px solid #eef2ff",
               }}
             >
               <img
-                src={user?.profilePhoto ? `http://localhost:5000/uploads/${user.profilePhoto}` : ""}
+                src={
+                  user?.profilePhoto
+                    ? `http://localhost:5000/uploads/${user.profilePhoto}`
+                    : ""
+                }
                 alt="Profile"
                 style={{
                   width: "100%",
                   height: "100%",
                   objectFit: "cover",
-                  borderRadius: "50%",
                 }}
               />
             </div>
@@ -179,11 +204,30 @@ export default function UserDashboard() {
         )}
 
         <div style={{ display: "flex", gap: "30px" }}>
-          <StatusCard title="Total Raised" value={totalRaised} color="#1d4ed8" />
+          <StatusCard title="Total Raised" value={totalRaised} color="#2563eb" />
           <StatusCard title="In Progress" value={inProgress} color="#d97706" />
           <StatusCard title="Completed" value={completed} color="#16a34a" />
         </div>
+
       </div>
+    </div>
+  );
+}
+
+function ProfileRow({ label, value }) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        marginBottom: "18px",
+        fontSize: "22px",
+        alignItems: "center",
+        color: "#334155",
+      }}
+    >
+      <span style={{ width: "180px", fontWeight: "600" }}>{label}</span>
+      <span style={{ width: "25px" }}>:</span>
+      <span style={{ marginLeft: "20px" }}>{value}</span>
     </div>
   );
 }
@@ -193,28 +237,49 @@ function StatusCard({ title, value, color }) {
     <div
       style={{
         background: "#ffffff",
-        padding: "25px",
-        borderRadius: "18px",
+        padding: "45px",
+        borderRadius: "20px",
         width: "48%",
         textAlign: "center",
-        boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
-        transition: "0.3s",
+
+        /* Strong visible card shadow */
+        boxShadow: "0 12px 30px rgba(0,0,0,0.12)",
+
+        border: "1px solid #e2e8f0",
+        transition: "all 0.25s ease",
+        cursor: "pointer"
       }}
       onMouseEnter={(e) => {
-        e.currentTarget.style.transform = "translateY(-6px)";
+        e.currentTarget.style.transform = "translateY(-8px)";
         e.currentTarget.style.boxShadow =
-          "0 10px 25px rgba(0,0,0,0.15)";
+          "0 20px 45px rgba(0,0,0,0.18)";
       }}
       onMouseLeave={(e) => {
-        e.currentTarget.style.transform = "translateY(0px)";
+        e.currentTarget.style.transform = "translateY(0)";
         e.currentTarget.style.boxShadow =
-          "0 6px 18px rgba(0,0,0,0.08)";
+          "0 12px 30px rgba(0,0,0,0.12)";
       }}
     >
-      <h3 style={{ marginBottom: "10px" }}>{title}</h3>
-      <p style={{ fontSize: "22px", fontWeight: "bold", color }}>
+      <h3
+        style={{
+          marginBottom: "18px",
+          fontSize: "24px",
+          color: "#334155",
+          fontWeight: "600"
+        }}
+      >
+        {title}
+      </h3>
+
+      <p
+        style={{
+          fontSize: "42px",
+          fontWeight: "700",
+          color
+        }}
+      >
         {value}
       </p>
     </div>
   );
-}
+} 

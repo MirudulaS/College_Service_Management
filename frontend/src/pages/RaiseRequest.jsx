@@ -1,66 +1,51 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Sidebar from "../components/Sidebar";
 
 export default function RaiseRequest() {
-  const navigate = useNavigate();
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [locationType, setLocationType] = useState("HOSTEL");
+  const [block, setBlock] = useState("");
+  const [roomNumber, setRoomNumber] = useState("");
+  const [category, setCategory] = useState("Electrical");
+  const [priority, setPriority] = useState("Medium");
+  const [image, setImage] = useState(null);
 
-  const [formDataState, setFormDataState] = useState({
-    title: "",
-    description: "",
-    locationType: "HOSTEL",
-    block: "",
-    roomNumber: "",
-    category: "Electrical",
-    priority: "MEDIUM",
-    image: null,
-  });
-
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-
-    if (files) {
-      setFormDataState({ ...formDataState, [name]: files[0] });
-    } else {
-      setFormDataState({ ...formDataState, [name]: value });
-    }
-  };
-
-  const handleSubmit = async (e) => {
+  const submitRequest = async (e) => {
     e.preventDefault();
 
-    try {
-      const formData = new FormData();
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("locationType", locationType);
+    formData.append("block", block);
+    formData.append("roomNumber", roomNumber);
+    formData.append("category", category);
+    formData.append("priority", priority);
 
-      Object.keys(formDataState).forEach((key) => {
-        if (formDataState[key]) {
-          formData.append(key, formDataState[key]);
-        }
-      });
-
-      await api.post("/services", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      // Reset form
-      setFormDataState({
-        title: "",
-        description: "",
-        locationType: "HOSTEL",
-        block: "",
-        roomNumber: "",
-        category: "Electrical",
-        priority: "MEDIUM",
-        image: null,
-      });
-
-      navigate("/raised-requests");
-
-    } catch (error) {
-      console.error(error);
-      alert("Failed to submit request");
+    if (image) {
+      formData.append("image", image);
     }
+
+    await api.post("/services", formData);
+
+    alert("Request submitted successfully");
+
+    setTitle("");
+    setDescription("");
+    setBlock("");
+    setRoomNumber("");
+    setImage(null);
+  };
+
+  const inputStyle = {
+    width: "100%",
+    padding: "14px 16px",
+    fontSize: "16px",
+    borderRadius: "8px",
+    border: "1px solid #cbd5e1",
+    marginBottom: "18px"
   };
 
   return (
@@ -69,137 +54,127 @@ export default function RaiseRequest() {
 
       <div
         style={{
-          marginLeft: "220px",
+          marginLeft: "280px",
           width: "100%",
-          background: "#e6f0ff",
           minHeight: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "40px",
+          background: "linear-gradient(135deg,#eef2ff,#f8fafc)",
+          padding: "40px"
         }}
       >
-        <form
-          onSubmit={handleSubmit}
+        <div
           style={{
-            width: "700px",
+            width: "720px",
+            margin: "40px auto",
             background: "#ffffff",
-            padding: "40px",
-            borderRadius: "16px",
-            boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
+            padding: "50px",
+            borderRadius: "20px",
+            boxShadow: "0 25px 60px rgba(0,0,0,0.15)",
+            border: "1px solid #e5e7eb"
           }}
         >
-          <h2 style={{ marginBottom: "30px" }}>
+          <h2
+            style={{
+              fontSize: "28px",
+              fontWeight: "700",
+              marginBottom: "30px",
+              color: "#1e293b"
+            }}
+          >
             Raise Service Request
           </h2>
 
-          {/* Title */}
-          <input
-            type="text"
-            name="title"
-            placeholder="Complaint Title"
-            required
-            value={formDataState.title}
-            onChange={handleChange}
-            style={{ width: "100%", padding: "12px", marginBottom: "20px" }}
-          />
+          <form onSubmit={submitRequest}>
+            <input
+              type="text"
+              placeholder="Complaint Title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              required
+              style={inputStyle}
+            />
 
-          {/* Description */}
-          <textarea
-            name="description"
-            placeholder="Describe the issue clearly..."
-            rows="4"
-            required
-            value={formDataState.description}
-            onChange={handleChange}
-            style={{ width: "100%", padding: "12px", marginBottom: "20px" }}
-          />
+            <textarea
+              placeholder="Describe the issue clearly..."
+              rows="4"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+              style={inputStyle}
+            />
 
-          {/* Location Type */}
-          <select
-            name="locationType"
-            value={formDataState.locationType}
-            onChange={handleChange}
-            style={{ width: "100%", padding: "12px", marginBottom: "20px" }}
-          >
-            <option value="HOSTEL">Hostel</option>
-            <option value="COLLEGE">College</option>
-          </select>
+            <select
+              value={locationType}
+              onChange={(e) => setLocationType(e.target.value)}
+              style={inputStyle}
+            >
+              <option value="HOSTEL">Hostel</option>
+              <option value="ACADEMIC">Academic Block</option>
+            </select>
 
-          {/* Block */}
-          <input
-            type="text"
-            name="block"
-            placeholder="Block / Department"
-            value={formDataState.block}
-            onChange={handleChange}
-            style={{ width: "100%", padding: "12px", marginBottom: "20px" }}
-          />
+            <input
+              type="text"
+              placeholder="Block / Department"
+              value={block}
+              onChange={(e) => setBlock(e.target.value)}
+              style={inputStyle}
+            />
 
-          {/* Room Number */}
-          <input
-            type="text"
-            name="roomNumber"
-            placeholder="Room Number"
-            value={formDataState.roomNumber}
-            onChange={handleChange}
-            style={{ width: "100%", padding: "12px", marginBottom: "20px" }}
-          />
+            <input
+              type="text"
+              placeholder="Room Number"
+              value={roomNumber}
+              onChange={(e) => setRoomNumber(e.target.value)}
+              style={inputStyle}
+            />
 
-          {/* Category */}
-          <select
-            name="category"
-            value={formDataState.category}
-            onChange={handleChange}
-            style={{ width: "100%", padding: "12px", marginBottom: "20px" }}
-          >
-            <option>Electrical</option>
-            <option>Plumbing</option>
-            <option>Carpentry</option>
-            <option>Internet</option>
-            <option>Cleaning</option>
-            <option>Other</option>
-          </select>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              style={inputStyle}
+            >
+              <option>Electrical</option>
+              <option>Plumbing</option>
+              <option>Cleaning</option>
+              <option>Internet</option>
+              <option>Other</option>
+            </select>
 
-          {/* Priority */}
-          <select
-            name="priority"
-            value={formDataState.priority}
-            onChange={handleChange}
-            style={{ width: "100%", padding: "12px", marginBottom: "20px" }}
-          >
-            <option value="LOW">Low</option>
-            <option value="MEDIUM">Medium</option>
-            <option value="HIGH">High</option>
-            <option value="URGENT">Urgent</option>
-          </select>
+            <select
+              value={priority}
+              onChange={(e) => setPriority(e.target.value)}
+              style={inputStyle}
+            >
+              <option>Low</option>
+              <option>Medium</option>
+              <option>High</option>
+            </select>
 
-          {/* Image */}
-          <input
-            type="file"
-            name="image"
-            accept="image/*"
-            onChange={handleChange}
-            style={{ marginBottom: "25px" }}
-          />
+            <input
+              type="file"
+              onChange={(e) => setImage(e.target.files[0])}
+              style={{ marginBottom: "20px" }}
+            />
 
-          <button
-            type="submit"
-            style={{
-              width: "100%",
-              padding: "14px",
-              background: "#2563eb",
-              color: "#fff",
-              border: "none",
-              borderRadius: "10px",
-              fontSize: "16px",
-              fontWeight: "600",
-              cursor: "pointer",
-            }}
-          >
-            Submit Request
-          </button>
-        </form>
+            <button
+              type="submit"
+              style={{
+                width: "100%",
+                padding: "14px",
+                fontSize: "16px",
+                fontWeight: "600",
+                background: "#2563eb",
+                color: "white",
+                border: "none",
+                borderRadius: "10px",
+                cursor: "pointer",
+                marginTop: "10px",
+                boxShadow: "0 8px 20px rgba(37,99,235,0.35)"
+              }}
+            >
+              Submit Request
+            </button>
+          </form>
+        </div>
       </div>
     </div>
   );

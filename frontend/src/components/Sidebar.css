@@ -52,23 +52,25 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 25px;
+  gap: 28px;
 }
 
+/* Portal title */
 .logo {
   margin-bottom: 40px;
-  font-size: 26px;        /* Larger Portal title */
+  font-size: 32px;      /* increased */
   font-weight: 700;
 }
 
+/* Sidebar menu links */
 .sidebar-link {
   color: white;
   text-decoration: none;
-  font-size: 18px;        /* Increased font size */
+  font-size: 22px;      /* increased */
   font-weight: 500;
   transition: 0.3s ease;
 }
 
 .sidebar-link:hover {
-  color: #38bdf8;         /* Light blue hover */
+  color: #38bdf8;
 }
