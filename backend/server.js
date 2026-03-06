@@ -26,6 +26,8 @@ app.use((req, res, next) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/services", serviceRoutes);
+app.use("/uploads", express.static("uploads"));
+// app.use("/uploads", express.static("uploads"));
 // app.use("/api/auth", authRoutes);
 app.get("/", (req, res) => {
   res.send("Service Management Portal API is running");

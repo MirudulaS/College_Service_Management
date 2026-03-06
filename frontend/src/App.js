@@ -5,6 +5,8 @@ import AdminDashboard from "./pages/AdminDashboard";
 import ProviderDashboard from "./pages/ProviderDashboard";
 import RaiseRequest from "./pages/RaiseRequest";
 import RaisedRequests from "./pages/RaisedRequests";
+import RequestPhoto from "./pages/RequestPhoto";
+
 
 export default function App() {
   return (
@@ -20,6 +22,8 @@ export default function App() {
 
         {/* Raised Requests List */}
         <Route path="/raised-requests" element={<RaisedRequests />} />
+        <Route path="/request-photo/:filename" element={<RequestPhoto />} />
+        
       </Routes>
     </BrowserRouter>
   );

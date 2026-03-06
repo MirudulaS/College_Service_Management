@@ -146,9 +146,7 @@ export default function UserDashboard() {
           >
             {/* LEFT DETAILS */}
             <div>
-              <h3 style={{ marginBottom: "20px" }}>
-                Profile Details
-              </h3>
+              <h3>Profile Details</h3>
               <p><strong>Type:</strong> {user.userType}</p>
               <p><strong>Department:</strong> {user.department}</p>
               {user.userType === "HOSTELLER" && (
@@ -156,18 +154,24 @@ export default function UserDashboard() {
               )}
             </div>
 
-            {/* SMALL ROUNDED PROFILE IMAGE (Like Screenshot) */}
-            <div>
+            {/* PROFILE IMAGE */}
+            <div
+              style={{
+                width: "180px",
+                height: "180px",
+                overflow: "hidden",
+                borderRadius: "50%",
+                boxShadow: "0 10px 25px rgba(0,0,0,0.2)",
+              }}
+            >
               <img
-                src={`http://localhost:5000/uploads/${user.profilePhoto}`}
+                src={user?.profilePhoto ? `http://localhost:5000/uploads/${user.profilePhoto}` : ""}
                 alt="Profile"
                 style={{
-                  width: "90px",
-                  height: "90px",
-                  borderRadius: "50px",
+                  width: "100%",
+                  height: "100%",
                   objectFit: "cover",
-                  border: "6px solid #2563eb",
-                  boxShadow: "0 8px 20px rgba(0,0,0,0.15)",
+                  borderRadius: "50%",
                 }}
               />
             </div>
@@ -194,7 +198,6 @@ function StatusCard({ title, value, color }) {
         width: "48%",
         textAlign: "center",
         boxShadow: "0 6px 18px rgba(0,0,0,0.08)",
-        borderTop: `5px solid ${color}`,
         transition: "0.3s",
       }}
       onMouseEnter={(e) => {
