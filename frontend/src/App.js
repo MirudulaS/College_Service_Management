@@ -1,19 +1,25 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard";
-import CreateService from "./pages/CreateService";
-import Navbar from "./components/Navbar";
-
-//test@gmail.com --> 123
+import UserDashboard from "./pages/UserDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
+import ProviderDashboard from "./pages/ProviderDashboard";
+import RaiseRequest from "./pages/RaiseRequest";
+import RaisedRequests from "./pages/RaisedRequests";
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Navbar />
       <Routes>
         <Route path="/" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/create-service" element={<CreateService />} />
+        <Route path="/user" element={<UserDashboard />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/provider" element={<ProviderDashboard />} />
+
+        {/* Raise Form Page */}
+        <Route path="/raise-request" element={<RaiseRequest />} />
+
+        {/* Raised Requests List */}
+        <Route path="/raised-requests" element={<RaisedRequests />} />
       </Routes>
     </BrowserRouter>
   );

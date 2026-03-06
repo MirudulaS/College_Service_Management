@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 
+// import authRoutes from "./routes/auth.routes.js";
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import serviceRoutes from "./routes/service.routes.js";
@@ -25,7 +26,7 @@ app.use((req, res, next) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/services", serviceRoutes);
-
+// app.use("/api/auth", authRoutes);
 app.get("/", (req, res) => {
   res.send("Service Management Portal API is running");
 });

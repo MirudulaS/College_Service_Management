@@ -1,0 +1,74 @@
+.sidebar {
+  width: 220px;
+  height: 100vh;
+  background: #1e293b;
+  padding: 30px 20px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar .logo {
+  color: white;
+  margin-bottom: 40px;
+}
+
+.sidebar a {
+  color: #cbd5e1;
+  text-decoration: none;
+  margin-bottom: 20px;
+  transition: 0.3s;
+}
+
+.sidebar a:hover {
+  color: white;
+}
+
+
+.sidebar {
+  width: 220px;
+  background: #1e293b;
+  color: white;
+  padding: 30px 20px;
+  position: fixed;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.logo {
+  margin-bottom: 30px;
+}
+
+.sidebar {
+  width: 220px;
+  background: #1e293b;
+  color: white;
+  padding: 30px 20px;
+  position: fixed;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.logo {
+  margin-bottom: 40px;
+  font-size: 26px;        /* Larger Portal title */
+  font-weight: 700;
+}
+
+.sidebar-link {
+  color: white;
+  text-decoration: none;
+  font-size: 18px;        /* Increased font size */
+  font-weight: 500;
+  transition: 0.3s ease;
+}
+
+.sidebar-link:hover {
+  color: #38bdf8;         /* Light blue hover */
+}

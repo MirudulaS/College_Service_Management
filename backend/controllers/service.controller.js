@@ -1,62 +1,117 @@
 import Service from "../models/ServiceRequest.js";
 
-// USER → create service
+/*
+  USER → creates request
+*/
 export const createService = async (req, res) => {
-  const service = await Service.create({
-    ...req.body,
-    createdBy: req.user.id,
-  });
+  try {
+    console.log("BODY:", req.body);
+    console.log("FILE:", req.file);
 
-  res.status(201).json(service);
+    const service = await Service.create({
+      title: req.body.title,
+      description: req.body.description,
+      locationType: req.body.locationType,
+      block: req.body.block,
+      roomNumber: req.body.roomNumber,
+      category: req.body.category,
+      priority: req.body.priority,
+      image: req.file ? req.file.filename : null,
+      createdBy: req.user._id,
+    });
+
+    res.status(201).json(service);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
 };
 
-// ADMIN → view all services
+
+/*
+  USER → get only their requests
+*/
+export const getUserServices = async (req, res) => {
+  try {
+    const services = await Service.find({ createdBy: req.user._id });
+    res.json(services);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+/*
+  ADMIN / PROVIDER → get all services
+*/
 export const getAllServices = async (req, res) => {
-  const services = await Service.find()
-    .populate("createdBy", "name email")
-    .populate("assignedTo", "name email");
+  try {
+    const services = await Service.find()
+      .populate("createdBy", "name")
+      .populate("assignedTo", "name");
 
-  res.json(services);
+    res.json(services);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-// USER → view own services
-export const getMyServices = async (req, res) => {
-  const services = await Service.find({
-    createdBy: req.user.id,
-  });
 
-  res.json(services);
-};
-
-// SERVICE_PROVIDER → view assigned services
-export const getAssignedServices = async (req, res) => {
-  const services = await Service.find({
-    assignedTo: req.user.id,
-  });
-
-  res.json(services);
-};
-
-// ADMIN → assign service
+/*
+  ADMIN → assign provider
+*/
 export const assignService = async (req, res) => {
-  const { serviceId, providerId } = req.body;
+  try {
+    const { providerId } = req.body;
 
-  const service = await Service.findByIdAndUpdate(
-    serviceId,
-    { assignedTo: providerId, status: "ASSIGNED" },
-    { new: true }
-  );
+    const service = await Service.findByIdAndUpdate(
+      req.params.id,
+      {
+        assignedTo: providerId,
+        status: "ASSIGNED"
+      },
+      { new: true }
+    );
 
-  res.json(service);
+    res.json(service);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 
-// SERVICE_PROVIDER → update status
-export const updateServiceStatus = async (req, res) => {
-  const service = await Service.findByIdAndUpdate(
-    req.params.id,
-    { status: req.body.status },
-    { new: true }
-  );
 
-  res.json(service);
+/*
+  PROVIDER → start working
+*/
+export const startService = async (req, res) => {
+  try {
+    const service = await Service.findByIdAndUpdate(
+      req.params.id,
+      { status: "IN_PROGRESS" },
+      { new: true }
+    );
+
+    res.json(service);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+/*
+  ADMIN / PROVIDER → mark completed
+*/
+export const completeService = async (req, res) => {
+  try {
+    const service = await Service.findByIdAndUpdate(
+      req.params.id,
+      { status: "COMPLETED" },
+      { new: true }
+    );
+
+    res.json(service);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };

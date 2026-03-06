@@ -66,3 +66,39 @@ export const updateUserRole = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// 🔥 FIXED PROFILE UPDATE
+export const updateProfile = async (req, res) => {
+  try {
+    // 🚨 If auth middleware fails, this will be undefined
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const updateData = {
+      userType: req.body.userType,
+      department: req.body.department,
+      roomNumber: req.body.roomNumber,
+    };
+
+    if (req.file) {
+      updateData.profilePhoto = req.file.filename;
+    }
+
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      updateData,
+      { new: true }
+    ).select("-password");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json(user);
+
+  } catch (error) {
+    console.error("Profile Update Error:", error);
+    res.status(500).json({ message: error.message });
+  }
+};

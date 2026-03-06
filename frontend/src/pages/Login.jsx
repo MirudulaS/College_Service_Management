@@ -8,10 +8,16 @@ export default function Login() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const navigate = useNavigate();
 
   const submit = async () => {
     try {
+      if (!email.trim() || !password.trim() || (isSignup && !name.trim())) {
+        alert("Please fill all fields");
+        return;
+      }
+
       if (isSignup) {
         await api.post("/auth/register", {
           name,
@@ -19,30 +25,48 @@ export default function Login() {
           password,
           role: "USER"
         });
+
         alert("Signup successful. Please login.");
         setIsSignup(false);
+        setName("");
+        setEmail("");
+        setPassword("");
       } else {
-        const res = await api.post("/auth/login", { email, password });
+        const res = await api.post("/auth/login", {
+          email,
+          password
+        });
+
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("user", JSON.stringify(res.data.user));
-        navigate("/dashboard");
+
+        const role = res.data.user?.role;
+
+        if (role === "ADMIN") {
+          navigate("/admin");
+        } else if (role === "SERVICE_PROVIDER") {
+          navigate("/provider");
+        } else {
+          navigate("/user");
+        }
       }
     } catch (error) {
-      alert("Invalid email or password");
+      const message =
+        error.response?.data?.message ||
+        error.response?.data ||
+        "Something went wrong. Please try again.";
+
+      alert(message);
     }
   };
 
   return (
     <div className="login-wrapper">
-
-      {/* Background Video */}
       <video autoPlay muted loop className="background-video">
         <source src="/bg-video.mp4" type="video/mp4" />
       </video>
 
       <div className="login-content">
-
-        {/* LEFT SIDE TEXT */}
         <div className="left-hero">
           <h1>College Service Portal</h1>
           <p>
@@ -51,7 +75,6 @@ export default function Login() {
           </p>
         </div>
 
-        {/* RIGHT SIDE LOGIN CARD */}
         <div className="login-container">
           <div className="login-card">
             <h2>{isSignup ? "Create Account" : "Welcome Back"}</h2>
@@ -59,18 +82,21 @@ export default function Login() {
             {isSignup && (
               <input
                 placeholder="Full Name"
+                value={name}
                 onChange={(e) => setName(e.target.value)}
               />
             )}
 
             <input
               placeholder="Email Address"
+              value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
 
             <input
               type="password"
               placeholder="Password"
+              value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
 
@@ -88,7 +114,6 @@ export default function Login() {
             </p>
           </div>
         </div>
-
       </div>
     </div>
   );

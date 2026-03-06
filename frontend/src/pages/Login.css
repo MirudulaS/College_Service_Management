@@ -84,6 +84,8 @@
 
 /* Button */
 .login-card button {
+  display: block;
+  margin: 0 auto;              /* centers button */
   width: 100%;
   padding: 14px;
   background: linear-gradient(to right, #2563eb, #1e40af);
@@ -93,13 +95,12 @@
   cursor: pointer;
   font-weight: 600;
   font-size: 16px;
-  transition: 0.3s ease;
+  transition: all 0.5s ease;
 }
 
 .login-card button:hover {
-  background: linear-gradient(to right, #16a34a, #15803d);
+  background: linear-gradient(to right, #3b82f6, #2563eb);
 }
-
 /* Switch text */
 .switch-text {
   margin-top: 20px;
@@ -110,5 +111,5 @@
 }
 
 .switch-text:hover {
-  color: #16a34a;
+  color: #ffffff;
 }

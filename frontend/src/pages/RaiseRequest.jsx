@@ -3,37 +3,56 @@ import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Sidebar from "../components/Sidebar";
 
-export default function CreateService() {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [locationType, setLocationType] = useState("HOSTEL");
-  const [block, setBlock] = useState("");
-  const [roomNumber, setRoomNumber] = useState("");
-  const [priority, setPriority] = useState("MEDIUM");
-  const [category, setCategory] = useState("Electrical");
-  const [image, setImage] = useState(null);
-
+export default function RaiseRequest() {
   const navigate = useNavigate();
 
-  const submit = async (e) => {
+  const [formDataState, setFormDataState] = useState({
+    title: "",
+    description: "",
+    locationType: "HOSTEL",
+    block: "",
+    roomNumber: "",
+    category: "Electrical",
+    priority: "MEDIUM",
+    image: null,
+  });
+
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+
+    if (files) {
+      setFormDataState({ ...formDataState, [name]: files[0] });
+    } else {
+      setFormDataState({ ...formDataState, [name]: value });
+    }
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
       const formData = new FormData();
-      formData.append("title", title);
-      formData.append("description", description);
-      formData.append("locationType", locationType);
-      formData.append("block", block);
-      formData.append("roomNumber", roomNumber);
-      formData.append("priority", priority);
-      formData.append("category", category);
 
-      if (image) {
-        formData.append("image", image);
-      }
+      Object.keys(formDataState).forEach((key) => {
+        if (formDataState[key]) {
+          formData.append(key, formDataState[key]);
+        }
+      });
 
       await api.post("/services", formData, {
         headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      // Reset form
+      setFormDataState({
+        title: "",
+        description: "",
+        locationType: "HOSTEL",
+        block: "",
+        roomNumber: "",
+        category: "Electrical",
+        priority: "MEDIUM",
+        image: null,
       });
 
       navigate("/raised-requests");
@@ -61,72 +80,78 @@ export default function CreateService() {
         }}
       >
         <form
-          onSubmit={submit}
+          onSubmit={handleSubmit}
           style={{
-            width: "650px", // Bigger form
+            width: "700px",
             background: "#ffffff",
             padding: "40px",
-            borderRadius: "14px",
-            boxShadow: "0 8px 20px rgba(0,0,0,0.1)",
+            borderRadius: "16px",
+            boxShadow: "0 10px 25px rgba(0,0,0,0.08)",
           }}
         >
-          <h2 style={{ marginBottom: "25px" }}>
+          <h2 style={{ marginBottom: "30px" }}>
             Raise Service Request
           </h2>
 
           {/* Title */}
           <input
             type="text"
+            name="title"
             placeholder="Complaint Title"
             required
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            style={{ width: "100%", padding: "12px", marginBottom: "18px" }}
+            value={formDataState.title}
+            onChange={handleChange}
+            style={{ width: "100%", padding: "12px", marginBottom: "20px" }}
           />
 
           {/* Description */}
           <textarea
+            name="description"
             placeholder="Describe the issue clearly..."
-            required
             rows="4"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            style={{ width: "100%", padding: "12px", marginBottom: "18px" }}
+            required
+            value={formDataState.description}
+            onChange={handleChange}
+            style={{ width: "100%", padding: "12px", marginBottom: "20px" }}
           />
 
           {/* Location Type */}
           <select
-            value={locationType}
-            onChange={(e) => setLocationType(e.target.value)}
-            style={{ width: "100%", padding: "12px", marginBottom: "18px" }}
+            name="locationType"
+            value={formDataState.locationType}
+            onChange={handleChange}
+            style={{ width: "100%", padding: "12px", marginBottom: "20px" }}
           >
             <option value="HOSTEL">Hostel</option>
             <option value="COLLEGE">College</option>
           </select>
 
-          {/* Block / Department */}
+          {/* Block */}
           <input
             type="text"
-            placeholder="Block / Department Name"
-            value={block}
-            onChange={(e) => setBlock(e.target.value)}
-            style={{ width: "100%", padding: "12px", marginBottom: "18px" }}
+            name="block"
+            placeholder="Block / Department"
+            value={formDataState.block}
+            onChange={handleChange}
+            style={{ width: "100%", padding: "12px", marginBottom: "20px" }}
           />
 
           {/* Room Number */}
           <input
             type="text"
+            name="roomNumber"
             placeholder="Room Number"
-            value={roomNumber}
-            onChange={(e) => setRoomNumber(e.target.value)}
-            style={{ width: "100%", padding: "12px", marginBottom: "18px" }}
+            value={formDataState.roomNumber}
+            onChange={handleChange}
+            style={{ width: "100%", padding: "12px", marginBottom: "20px" }}
           />
 
           {/* Category */}
           <select
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            style={{ width: "100%", padding: "12px", marginBottom: "18px" }}
+            name="category"
+            value={formDataState.category}
+            onChange={handleChange}
+            style={{ width: "100%", padding: "12px", marginBottom: "20px" }}
           >
             <option>Electrical</option>
             <option>Plumbing</option>
@@ -138,9 +163,10 @@ export default function CreateService() {
 
           {/* Priority */}
           <select
-            value={priority}
-            onChange={(e) => setPriority(e.target.value)}
-            style={{ width: "100%", padding: "12px", marginBottom: "18px" }}
+            name="priority"
+            value={formDataState.priority}
+            onChange={handleChange}
+            style={{ width: "100%", padding: "12px", marginBottom: "20px" }}
           >
             <option value="LOW">Low</option>
             <option value="MEDIUM">Medium</option>
@@ -148,12 +174,13 @@ export default function CreateService() {
             <option value="URGENT">Urgent</option>
           </select>
 
-          {/* Image Upload */}
+          {/* Image */}
           <input
             type="file"
+            name="image"
             accept="image/*"
-            onChange={(e) => setImage(e.target.files[0])}
-            style={{ marginBottom: "20px" }}
+            onChange={handleChange}
+            style={{ marginBottom: "25px" }}
           />
 
           <button
@@ -164,7 +191,7 @@ export default function CreateService() {
               background: "#2563eb",
               color: "#fff",
               border: "none",
-              borderRadius: "8px",
+              borderRadius: "10px",
               fontSize: "16px",
               fontWeight: "600",
               cursor: "pointer",

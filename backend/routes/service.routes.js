@@ -1,28 +1,32 @@
 import express from "express";
 import auth from "../middleware/auth.middleware.js";
 import role from "../middleware/role.middleware.js";
-
+import multer from "multer";
 import {
   createService,
+  getUserServices,
   getAllServices,
-  getMyServices,
-  getAssignedServices,
   assignService,
-  updateServiceStatus
+  startService,
+  completeService
 } from "../controllers/service.controller.js";
 
 const router = express.Router();
 
-// USER
-router.post("/", auth, role("USER"), createService);
-router.get("/my", auth, role("USER"), getMyServices);
+const upload = multer({ dest: "uploads/" });
 
-// SERVICE_PROVIDER
-router.get("/assigned", auth, role("SERVICE_PROVIDER"), getAssignedServices);
-router.put("/status/:id", auth, role("SERVICE_PROVIDER"), updateServiceStatus);
+router.post(
+  "/",
+  auth,                 // 🔥 MUST BE HERE
+  role("USER"),         // 🔥 MUST BE HERE
+  upload.single("image"),
+  createService
+);
 
-// ADMIN
-router.get("/", auth, role("ADMIN"), getAllServices);
-router.put("/assign", auth, role("ADMIN"), assignService);
+router.get("/my", auth, role("USER"), getUserServices);
+router.get("/", auth, role("ADMIN", "SERVICE_PROVIDER"), getAllServices);
+router.put("/:id/assign", auth, role("ADMIN"), assignService);
+router.put("/:id/start", auth, role("SERVICE_PROVIDER"), startService);
+router.put("/:id/complete", auth, role("ADMIN", "SERVICE_PROVIDER"), completeService);
 
 export default router;
