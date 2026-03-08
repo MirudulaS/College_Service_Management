@@ -75,7 +75,6 @@ export default function AdminDashboard() {
                 }}
               >
 
-                {/* TOP RIGHT */}
                 <div
                   style={{
                     position: "absolute",
@@ -85,7 +84,6 @@ export default function AdminDashboard() {
                   }}
                 >
 
-                  {/* Scheduled badge (same style as requested) */}
                   <div
                     style={{
                       padding: "6px 16px",
@@ -100,24 +98,25 @@ export default function AdminDashboard() {
                     {req.scheduledTime ? "SCHEDULED" : "NOT SCHEDULED"}
                   </div>
 
-                  {/* Issue ID below schedule */}
                   <div
-                  style={{
-                    marginTop: "8px",
-                    fontSize: "18px",
-                    fontWeight: "800",
-                    color: "#1e293b"
-                  }}
-                >
-                  {req.issueId}
-                </div>
+                    style={{
+                      marginTop: "8px",
+                      fontSize: "18px",
+                      fontWeight: "800",
+                      color: "#1e293b"
+                    }}
+                  >
+                    {req.issueId}
+                  </div>
 
                 </div>
 
                 <h3>{req.title}</h3>
-                  <p style={{ fontSize: "16px", fontWeight: "600", marginBottom: "10px" }}>
-                    Issue ID : {req.issueId}
-                  </p>
+
+                <p style={{ fontSize: "16px", fontWeight: "600", marginBottom: "10px" }}>
+                  Issue ID : {req.issueId}
+                </p>
+
                 <div
                   style={{
                     background: "#f8fafc",
@@ -169,14 +168,12 @@ export default function AdminDashboard() {
                   <span>{req.priority}</span>
                 </div>
 
-                {/* STATUS aligned properly */}
                 <div style={{ display: "flex", marginBottom: "8px", fontSize: "18px", alignItems: "center" }}>
                   <span style={{ width: "140px", fontWeight: "600" }}>Status</span>
                   <span style={{ width: "20px" }}>:</span>
 
                   <span
                     style={{
-                      marginLeft: "0px",
                       padding: "6px 16px",
                       borderRadius: "20px",
                       fontSize: "12px",
@@ -206,9 +203,7 @@ export default function AdminDashboard() {
 
                 <p>
                   <strong>Scheduled Time:</strong>{" "}
-                  {req.scheduledTime
-                    ? new Date(req.scheduledTime).toLocaleString()
-                    : "Not Assigned"}
+                  {req.scheduledTime || "Not Assigned"}
                 </p>
 
               </div>

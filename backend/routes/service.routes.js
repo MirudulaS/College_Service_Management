@@ -36,4 +36,6 @@ router.put("/:id/start", auth, role("SERVICE_PROVIDER"), startService);
 /* COMPLETE */
 router.put("/:id/complete", auth, role("ADMIN", "SERVICE_PROVIDER"), completeService);
 
+// router.put("/:id/complete", auth, role("ADMIN", "SERVICE_PROVIDER"), completeService);
+
 export default router;

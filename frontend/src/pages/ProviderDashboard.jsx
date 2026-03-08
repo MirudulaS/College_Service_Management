@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import api from "../services/api";
 import Sidebar from "../components/Sidebar";
 
 export default function ProviderDashboard() {
 
   const [services, setServices] = useState([]);
+  const location = useLocation();
 
   useEffect(() => {
     fetchServices();
@@ -13,25 +15,34 @@ export default function ProviderDashboard() {
   const fetchServices = async () => {
     try {
       const res = await api.get("/services/provider");
-      setServices(res.data);
+      setServices(res.data || []);
     } catch (err) {
       console.error(err);
     }
   };
 
   const startWork = async (id) => {
-    await api.put(`/services/${id}/start`);
-    fetchServices();
+    try {
+      await api.put(`/services/${id}/start`);
+      fetchServices();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const completeWork = async (id) => {
-    await api.put(`/services/${id}/complete`);
-    fetchServices();
+    try {
+      await api.put(`/services/${id}/complete`);
+      fetchServices();
+    } catch (err) {
+      console.error(err);
+      alert("Failed to complete work");
+    }
   };
 
-  const assigned = services.filter(s => s.status === "ASSIGNED");
-  const inProgress = services.filter(s => s.status === "IN_PROGRESS");
-  const completed = services.filter(s => s.status === "COMPLETED");
+  const assigned = services.filter((s) => s.status === "ASSIGNED");
+  const inProgress = services.filter((s) => s.status === "IN_PROGRESS");
+  const completed = services.filter((s) => s.status === "COMPLETED");
 
   return (
     <div style={{ display: "flex" }}>
@@ -48,28 +59,31 @@ export default function ProviderDashboard() {
         }}
       >
 
-        {/* Scheduled Work */}
-        <Section
-          title="Scheduled Work"
-          data={assigned}
-          button="Start Work"
-          action={startWork}
-        />
+        {location.pathname === "/provider" && (
+          <Section
+            title="Scheduled Work"
+            data={assigned}
+            button="Start Work"
+            action={startWork}
+          />
+        )}
 
-        {/* Work In Progress */}
-        <Section
-          title="Work In Progress"
-          data={inProgress}
-          button="Complete Work"
-          action={completeWork}
-        />
+        {location.pathname === "/provider/work" && (
+          <Section
+            title="Work In Progress"
+            data={inProgress}
+            button="Complete Work"
+            action={completeWork}
+          />
+        )}
 
-        {/* Completed Work */}
-        <Section
-          title="Past Work / Completed Work"
-          data={completed}
-          button={null}
-        />
+        {location.pathname === "/provider/history" && (
+          <Section
+            title="Past Work / Completed Work"
+            data={completed}
+            button={null}
+          />
+        )}
 
       </div>
 
@@ -77,7 +91,7 @@ export default function ProviderDashboard() {
   );
 }
 
-function Section({ title, data, button, action }) {
+function Section({ title, data = [], button, action }) {
 
   return (
     <div style={{ marginBottom: "40px" }}>
@@ -85,6 +99,10 @@ function Section({ title, data, button, action }) {
       <h2 style={{ fontSize: "28px", marginBottom: "20px" }}>
         {title}
       </h2>
+
+      {data.length === 0 && (
+        <p>No records found</p>
+      )}
 
       {data.map((req) => (
 
@@ -108,16 +126,14 @@ function Section({ title, data, button, action }) {
 
           <p>
             <strong>Scheduled Time:</strong>{" "}
-            {req.scheduledTime
-              ? new Date(req.scheduledTime).toLocaleString()
-              : "Not Assigned"}
+            {req.scheduledTime || "Not Assigned"}
           </p>
 
           <p>
             <strong>User:</strong> {req.createdBy?.name}
           </p>
 
-          {button && (
+          {button && req._id && (
             <button
               onClick={() => action(req._id)}
               style={{

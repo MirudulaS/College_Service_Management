@@ -61,12 +61,19 @@ export default function UserDashboard() {
   const totalRaised = services.length;
 
   const inProgress = services.filter(
-    (s) => s.status === "ASSIGNED" || s.status === "IN_PROGRESS"
+    (s) => s.status === "IN_PROGRESS"
   ).length;
 
   const completed = services.filter(
     (s) => s.status === "COMPLETED"
   ).length;
+
+  useEffect(() => {
+    fetchData();
+    const interval = setInterval(fetchData, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
 
   return (
     <div style={{ display: "flex", fontFamily: "Inter, sans-serif" }}>

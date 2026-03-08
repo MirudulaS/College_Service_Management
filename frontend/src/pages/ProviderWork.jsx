@@ -16,7 +16,15 @@ export default function ProviderWork() {
   };
 
   const updateStatus = async (id, status) => {
-    await api.put(`/services/provider/update/${id}`, { status });
+
+    if (status === "IN_PROGRESS") {
+      await api.put(`/services/${id}/start`);
+    }
+
+    if (status === "COMPLETED") {
+      await api.put(`/services/${id}/complete`);
+    }
+
     fetchWork();
   };
 
