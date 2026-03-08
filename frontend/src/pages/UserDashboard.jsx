@@ -11,6 +11,23 @@ export default function UserDashboard() {
   const [roomNumber, setRoomNumber] = useState("");
   const [profilePhoto, setProfilePhoto] = useState(null);
 
+  // SAFE USER PARSE (fix for JSON error)
+  let storedUser = null;
+  try {
+    const storedUserString = localStorage.getItem("user");
+    storedUser = storedUserString ? JSON.parse(storedUserString) : null;
+  } catch (err) {
+    storedUser = null;
+  }
+
+  if (!storedUser) {
+    window.location.href = "/";
+  }
+
+  if (storedUser?.role !== "USER") {
+    window.location.href = "/admin";
+  }
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -241,10 +258,7 @@ function StatusCard({ title, value, color }) {
         borderRadius: "20px",
         width: "48%",
         textAlign: "center",
-
-        /* Strong visible card shadow */
         boxShadow: "0 12px 30px rgba(0,0,0,0.12)",
-
         border: "1px solid #e2e8f0",
         transition: "all 0.25s ease",
         cursor: "pointer"
@@ -282,4 +296,4 @@ function StatusCard({ title, value, color }) {
       </p>
     </div>
   );
-} 
+}

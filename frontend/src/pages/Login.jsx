@@ -13,12 +13,15 @@ export default function Login() {
 
   const submit = async () => {
     try {
+
       if (!email.trim() || !password.trim() || (isSignup && !name.trim())) {
         alert("Please fill all fields");
         return;
       }
 
+      /* ================= SIGNUP ================= */
       if (isSignup) {
+
         await api.post("/auth/register", {
           name,
           email,
@@ -27,33 +30,56 @@ export default function Login() {
         });
 
         alert("Signup successful. Please login.");
+
         setIsSignup(false);
         setName("");
         setEmail("");
         setPassword("");
-      } else {
+      }
+
+      /* ================= LOGIN ================= */
+      else {
+
         const res = await api.post("/auth/login", {
           email,
           password
         });
 
-        localStorage.setItem("token", res.data.token);
-        localStorage.setItem("user", JSON.stringify(res.data.user));
+        const token = res.data.token;
 
-        const role = res.data.user?.role;
+        // Save token
+        localStorage.setItem("token", token);
+
+        // Get logged in user
+        const me = await api.get("/auth/me", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        const user = me.data;
+
+        // Save user
+        localStorage.setItem("user", JSON.stringify(user));
+
+        const role = user.role;
 
         if (role === "ADMIN") {
           navigate("/admin");
-        } else if (role === "SERVICE_PROVIDER") {
+        } 
+        else if (role === "SERVICE_PROVIDER") {
           navigate("/provider");
-        } else {
+        } 
+        else {
           navigate("/user");
         }
       }
+
     } catch (error) {
+
       const message =
         error.response?.data?.message ||
-        error.response?.data ||
+        error.response?.data?.msg ||
         "Something went wrong. Please try again.";
 
       alert(message);
@@ -62,11 +88,13 @@ export default function Login() {
 
   return (
     <div className="login-wrapper">
+
       <video autoPlay muted loop className="background-video">
         <source src="/bg-video.mp4" type="video/mp4" />
       </video>
 
       <div className="login-content">
+
         <div className="left-hero">
           <h1>College Service Portal</h1>
           <p>
@@ -76,7 +104,9 @@ export default function Login() {
         </div>
 
         <div className="login-container">
+
           <div className="login-card">
+
             <h2>{isSignup ? "Create Account" : "Welcome Back"}</h2>
 
             {isSignup && (
@@ -112,9 +142,13 @@ export default function Login() {
                 ? "Already have an account? Login"
                 : "New user? Signup"}
             </p>
+
           </div>
+
         </div>
+
       </div>
+
     </div>
   );
 }

@@ -2,6 +2,9 @@ import express from "express";
 import multer from "multer";
 import auth from "../middleware/auth.middleware.js";
 import role from "../middleware/role.middleware.js";
+import { getProviders } from "../controllers/user.controller.js";
+
+
 import {
   getAllUsers,
   getUserById,
@@ -22,7 +25,7 @@ router.put(
   upload.single("profilePhoto"),
   updateProfile
 );
-
+router.get("/providers", getProviders);
 router.get("/", auth, role("ADMIN"), getAllUsers);
 router.get("/:id", auth, role("ADMIN"), getUserById);
 router.delete("/:id", auth, role("ADMIN"), deleteUser);

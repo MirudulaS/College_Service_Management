@@ -102,3 +102,37 @@ export const updateProfile = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getProvidersByCategory = async (req, res) => {
+  try {
+
+    const { category } = req.params;
+
+    const providers = await User.find({
+      role: "SERVICE_PROVIDER",
+      category: category
+    }).select("-password");
+
+    res.json(providers);
+
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getProviders = async (req, res) => {
+  try {
+
+    const providers = await User.find({
+      role: "SERVICE_PROVIDER"
+    }).select(
+      "name email specialization availability"
+    );
+
+    res.json(providers);
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};

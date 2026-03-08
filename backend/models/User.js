@@ -29,6 +29,19 @@ const userSchema = new mongoose.Schema(
     profilePhoto: {
       type: String,
     },
+
+    availability: [
+      {
+        date: Date,
+        slots: [String] // ["9AM", "11AM", "2PM"]
+      }
+    ],
+
+    specialization: {
+      type: String,
+      enum: ["Electrical", "Plumbing", "Internet", "Cleaning", "Carpentry"],
+    },
+    
   },
   { timestamps: true }
 );

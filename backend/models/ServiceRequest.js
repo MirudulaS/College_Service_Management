@@ -2,6 +2,11 @@ import mongoose from "mongoose";
 
 const serviceSchema = new mongoose.Schema(
   {
+    issueId: {
+      type: String,
+      unique: true
+    },
+
     title: {
       type: String,
       required: true,
@@ -40,7 +45,7 @@ const serviceSchema = new mongoose.Schema(
         "Cleaning",
         "Other",
       ],
-      required: true,   // 🔥 make it required (you always send it)
+      required: true,
     },
 
     priority: {
@@ -70,6 +75,22 @@ const serviceSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       default: null,
+    },
+
+    assignedProvider: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+
+    scheduledTime: {
+      type: String,
+      default : null,
+    },
+
+    providerStatus: {
+      type: String,
+      enum: ["ASSIGNED", "IN_PROGRESS", "COMPLETED"],
+      default: "ASSIGNED",
     },
   },
   {

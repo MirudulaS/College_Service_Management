@@ -3,130 +3,141 @@ import api from "../services/api";
 import Sidebar from "../components/Sidebar";
 
 export default function ProviderDashboard() {
+
   const [services, setServices] = useState([]);
-  const user = JSON.parse(localStorage.getItem("user"));
 
   useEffect(() => {
     fetchServices();
   }, []);
 
   const fetchServices = async () => {
-    const res = await api.get("/services");
-    setServices(res.data);
+    try {
+      const res = await api.get("/services/provider");
+      setServices(res.data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
-  const startService = async (id) => {
+  const startWork = async (id) => {
     await api.put(`/services/${id}/start`);
     fetchServices();
   };
 
-  const completeService = async (id) => {
+  const completeWork = async (id) => {
     await api.put(`/services/${id}/complete`);
     fetchServices();
   };
 
-  const assigned = services.filter(s => s.status === "ASSIGNED").length;
-  const inProgress = services.filter(s => s.status === "IN_PROGRESS").length;
-  const completed = services.filter(s => s.status === "COMPLETED").length;
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "ASSIGNED":
-        return "#3b82f6";
-      case "IN_PROGRESS":
-        return "#9333ea";
-      case "COMPLETED":
-        return "#16a34a";
-      default:
-        return "#6b7280";
-    }
-  };
+  const assigned = services.filter(s => s.status === "ASSIGNED");
+  const inProgress = services.filter(s => s.status === "IN_PROGRESS");
+  const completed = services.filter(s => s.status === "COMPLETED");
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", background: "#ffffff" }}>
-      <Sidebar role={user.role} />
+    <div style={{ display: "flex" }}>
 
-      <div style={{ marginLeft: "220px", padding: "40px", width: "100%" }}>
-        <h1>Service Provider Dashboard</h1>
+      <Sidebar role="SERVICE_PROVIDER" />
 
-        {/* Summary Section */}
-        <div style={{ display: "flex", gap: "20px", marginTop: "30px" }}>
-          <div className="stat-card">Assigned: {assigned}</div>
-          <div className="stat-card">In Progress: {inProgress}</div>
-          <div className="stat-card">Completed: {completed}</div>
-        </div>
+      <div
+        style={{
+          marginLeft: "280px",
+          padding: "40px",
+          width: "100%",
+          background: "#f1f5f9",
+          minHeight: "100vh"
+        }}
+      >
 
-        {/* Service List */}
-        <div style={{ marginTop: "40px" }}>
-          {services.length === 0 ? (
-            <p>No services available.</p>
-          ) : (
-            services.map(service => (
-              <div
-                key={service._id}
-                style={{
-                  background: "#f9fafb",
-                  padding: "20px",
-                  borderRadius: "8px",
-                  marginBottom: "20px",
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.05)"
-                }}
-              >
-                <h3>{service.title}</h3>
-                <p>{service.description}</p>
-                <p>
-                  Status:{" "}
-                  <span
-                    style={{
-                      background: getStatusColor(service.status),
-                      color: "#fff",
-                      padding: "4px 10px",
-                      borderRadius: "20px",
-                      fontSize: "12px"
-                    }}
-                  >
-                    {service.status}
-                  </span>
-                </p>
+        {/* Scheduled Work */}
+        <Section
+          title="Scheduled Work"
+          data={assigned}
+          button="Start Work"
+          action={startWork}
+        />
 
-                {/* Action Buttons */}
-                {service.status === "ASSIGNED" && (
-                  <button
-                    onClick={() => startService(service._id)}
-                    style={{
-                      marginRight: "10px",
-                      padding: "8px 16px",
-                      background: "#2563eb",
-                      color: "#fff",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer"
-                    }}
-                  >
-                    Start
-                  </button>
-                )}
+        {/* Work In Progress */}
+        <Section
+          title="Work In Progress"
+          data={inProgress}
+          button="Complete Work"
+          action={completeWork}
+        />
 
-                {service.status !== "COMPLETED" && (
-                  <button
-                    onClick={() => completeService(service._id)}
-                    style={{
-                      padding: "8px 16px",
-                      background: "#16a34a",
-                      color: "#fff",
-                      border: "none",
-                      borderRadius: "5px",
-                      cursor: "pointer"
-                    }}
-                  >
-                    Complete
-                  </button>
-                )}
-              </div>
-            ))
-          )}
-        </div>
+        {/* Completed Work */}
+        <Section
+          title="Past Work / Completed Work"
+          data={completed}
+          button={null}
+        />
+
       </div>
+
+    </div>
+  );
+}
+
+function Section({ title, data, button, action }) {
+
+  return (
+    <div style={{ marginBottom: "40px" }}>
+
+      <h2 style={{ fontSize: "28px", marginBottom: "20px" }}>
+        {title}
+      </h2>
+
+      {data.map((req) => (
+
+        <div
+          key={req._id}
+          style={{
+            background: "white",
+            padding: "20px",
+            borderRadius: "16px",
+            marginBottom: "15px",
+            boxShadow: "0 8px 20px rgba(0,0,0,0.08)"
+          }}
+        >
+
+          <h3>{req.title}</h3>
+
+          <p>{req.description}</p>
+
+          <p><strong>Category:</strong> {req.category}</p>
+          <p><strong>Priority:</strong> {req.priority}</p>
+
+          <p>
+            <strong>Scheduled Time:</strong>{" "}
+            {req.scheduledTime
+              ? new Date(req.scheduledTime).toLocaleString()
+              : "Not Assigned"}
+          </p>
+
+          <p>
+            <strong>User:</strong> {req.createdBy?.name}
+          </p>
+
+          {button && (
+            <button
+              onClick={() => action(req._id)}
+              style={{
+                marginTop: "10px",
+                padding: "10px 18px",
+                background: "#2563eb",
+                color: "white",
+                border: "none",
+                borderRadius: "8px",
+                cursor: "pointer"
+              }}
+            >
+              {button}
+            </button>
+          )}
+
+        </div>
+
+      ))}
+
     </div>
   );
 }
